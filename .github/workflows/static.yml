@@ -38,10 +38,6 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
-
-       # Add a step to rename index.md to index.html
-      - name: Rename index.md to index.html
-        run: mv index.md index.html
         
       - name: Deploy to GitHub Pages
         id: deployment
