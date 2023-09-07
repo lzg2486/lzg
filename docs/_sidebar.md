@@ -1,5 +1,5 @@
 - 一章
-    - [docsify文档](docs/docsify/README.md)
+    - [docsify文档](docsify/README.md)
 - 二章
-    - [JS](docs/javascript/README.md)
-    - [例子](docs/case/README.md)
+    - [JS](javascript/README.md)
+    - [例子](case/README.md)
