@@ -1,3 +1,0 @@
-- [首页](./)
-- [我是个例子](./case/README.md)
-- [我是个JS](./javascript/README.md)
