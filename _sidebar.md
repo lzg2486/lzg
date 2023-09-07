@@ -1,3 +1,3 @@
 - [首页](/)
 - [docsify文档](docs/docsify/README.md)
-- [我是个例子](docs)
+- [一级目录](docs/README.md)
