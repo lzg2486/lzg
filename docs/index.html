@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
   <head>
     <meta charset="UTF-8" />
-    <title>docsify</title>
+    <title>lzg</title>
     <link rel="icon" href="_media/favicon.ico" />
     <meta
       name="google-site-verification"
@@ -62,12 +62,6 @@
     <div id="app">Loading ...</div>
     <script src="//cdn.jsdelivr.net/npm/docsify-plugin-carbon@1"></script>
     <script>
-      // Set html "lang" attribute based on URL
-      const lang = location.hash.match(/#\/(de-de|es|ru-ru|zh-cn)\//);
-
-      if (lang) {
-        document.documentElement.setAttribute('lang', lang[1]);
-      }
 
       // Docsify configuration
       window.$docsify = {
@@ -78,14 +72,6 @@
           '.*?/changelog':
             'https://raw.githubusercontent.com/docsifyjs/docsify/master/CHANGELOG.md',
           '/.*/_navbar.md': '/_navbar.md',
-          '/es/(.*)':
-            'https://raw.githubusercontent.com/docsifyjs/docs-es/master/$1',
-          '/de-de/(.*)':
-            'https://raw.githubusercontent.com/docsifyjs/docs-de/master/$1',
-          '/ru-ru/(.*)':
-            'https://raw.githubusercontent.com/docsifyjs/docs-ru/master/$1',
-          '/zh-cn/(.*)':
-            'https://cdn.jsdelivr.net/gh/docsifyjs/docs-zh@master/$1',
         },
         auto2top: true, // 一个布尔值，如果设置为 true，则当用户导航到新的文档页面时，页面将自动滚动到顶部。
         coverpage: true, // 一个布尔值，如果设置为 true，则启用封面页面功能，通常用于展示网站的概要信息。
@@ -93,7 +79,7 @@
         loadSidebar: true, // 一个布尔值，如果设置为 true，则启用加载侧边栏的功能，通常用于显示文档的目录结构。
         loadNavbar: true, // 一个布尔值，如果设置为 true，则启用加载导航栏的功能，通常用于显示网站的顶部导航。
         mergeNavbar: true, //  一个布尔值，如果设置为 true，则合并导航栏的内容，将导航栏的内容合并到侧边栏中。
-        maxLevel: 4, // 一个整数，指定文档的最大标题级别。默认为 4。
+        maxLevel: 6, // 一个整数，指定文档的最大标题级别。默认为 4。
         subMaxLevel: 2, // 一个整数，指定侧边栏中子标题的最大级别。默认为 2。
         // ga: 'UA-106147152-1', // Google Analytics（GA）的跟踪ID，用于跟踪网站的访问量和用户行为。
         // // Matomo（以前称为Piwik）分析工具的配置选项，包括主机和ID。
@@ -104,31 +90,18 @@
         name: '笔记', // 网站的名称，用于显示在导航栏或其他位置。
         // 一个对象，包含不同语言版本的网站名称链接。
         nameLink: {
-          '/es/': '#/es/',
-          '/de-de/': '#/de-de/',
-          '/ru-ru/': '#/ru-ru/',
-          '/zh-cn/': '#/zh-cn/',
           '/': '#/',
         },
         // 配置文档网站的搜索功能，包括占位符、搜索路径等。
         search: {
           noData: {
-            '/es/': '¡No hay resultados!',
-            '/de-de/': 'Keine Ergebnisse!',
-            '/ru-ru/': 'Никаких результатов!',
-            '/zh-cn/': '没有结果!',
-            '/': 'No results!',
+            '/': '没有结果!',
           },
           paths: 'auto', // 这个选项用于指定 Docsify 文档网站的路由设置。当设置为 'auto' 时，Docsify 将自动根据文件系统中的文档文件来生成路由。这意味着你的文档文件的结构和目录将会映射到网站的 URL 路由上。
           // 搜索框占位符
           placeholder: {
-            '/es/': 'Buscar',
-            '/de-de/': 'Suche',
-            '/ru-ru/': 'Поиск',
-            '/zh-cn/': '搜索',
-            '/': 'Search',
+            '/': '搜索',
           },
-          pathNamespaces: ['/es', '/de-de', '/ru-ru', '/zh-cn'],
         },
         //  一个对象，定义了自定义的 Vue.js 组件，用于在文档中嵌入交互式内容。
         vueComponents: {

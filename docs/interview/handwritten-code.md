@@ -1,5 +1,6 @@
 # Quick start
-我是手写代码模块
+## 我是手写代码模块
+### 我是手写代码模块2
 It is recommended to install `docsify-cli` globally, which helps initializing and previewing the website locally.
 
 ```bash
