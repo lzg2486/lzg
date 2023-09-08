@@ -71,6 +71,7 @@
 
       // Docsify configuration
       window.$docsify = {
+        // 一个对象，包含路由别名的配置。它将特定的路径映射到外部资源的链接。这用于显示文档内容，允许你在文档中引用外部文件或URL
         alias: {
           '.*?/awesome':
             'https://raw.githubusercontent.com/docsifyjs/awesome-docsify/master/README.md',
@@ -86,20 +87,22 @@
           '/zh-cn/(.*)':
             'https://cdn.jsdelivr.net/gh/docsifyjs/docs-zh@master/$1',
         },
-        auto2top: true,
-        coverpage: true,
-        executeScript: true,
-        loadSidebar: true,
-        loadNavbar: true,
-        mergeNavbar: true,
-        maxLevel: 4,
-        subMaxLevel: 2,
-        ga: 'UA-106147152-1',
-        matomo: {
-          host: '//matomo.thunderwave.de',
-          id: 6,
-        },
-        name: '笔记',
+        auto2top: true, // 一个布尔值，如果设置为 true，则当用户导航到新的文档页面时，页面将自动滚动到顶部。
+        coverpage: true, // 一个布尔值，如果设置为 true，则启用封面页面功能，通常用于展示网站的概要信息。
+        executeScript: true, //  一个布尔值，如果设置为 true，则允许在文档中执行 JavaScript 代码。
+        loadSidebar: true, // 一个布尔值，如果设置为 true，则启用加载侧边栏的功能，通常用于显示文档的目录结构。
+        loadNavbar: true, // 一个布尔值，如果设置为 true，则启用加载导航栏的功能，通常用于显示网站的顶部导航。
+        mergeNavbar: true, //  一个布尔值，如果设置为 true，则合并导航栏的内容，将导航栏的内容合并到侧边栏中。
+        maxLevel: 4, // 一个整数，指定文档的最大标题级别。默认为 4。
+        subMaxLevel: 2, // 一个整数，指定侧边栏中子标题的最大级别。默认为 2。
+        // ga: 'UA-106147152-1', // Google Analytics（GA）的跟踪ID，用于跟踪网站的访问量和用户行为。
+        // // Matomo（以前称为Piwik）分析工具的配置选项，包括主机和ID。
+        // matomo: {
+        //   host: '//matomo.thunderwave.de',
+        //   id: 6,
+        // },
+        name: '笔记', // 网站的名称，用于显示在导航栏或其他位置。
+        // 一个对象，包含不同语言版本的网站名称链接。
         nameLink: {
           '/es/': '#/es/',
           '/de-de/': '#/de-de/',
@@ -107,6 +110,7 @@
           '/zh-cn/': '#/zh-cn/',
           '/': '#/',
         },
+        // 配置文档网站的搜索功能，包括占位符、搜索路径等。
         search: {
           noData: {
             '/es/': '¡No hay resultados!',
@@ -115,7 +119,8 @@
             '/zh-cn/': '没有结果!',
             '/': 'No results!',
           },
-          paths: 'auto',
+          paths: 'auto', // 这个选项用于指定 Docsify 文档网站的路由设置。当设置为 'auto' 时，Docsify 将自动根据文件系统中的文档文件来生成路由。这意味着你的文档文件的结构和目录将会映射到网站的 URL 路由上。
+          // 搜索框占位符
           placeholder: {
             '/es/': 'Buscar',
             '/de-de/': 'Suche',
@@ -125,6 +130,7 @@
           },
           pathNamespaces: ['/es', '/de-de', '/ru-ru', '/zh-cn'],
         },
+        //  一个对象，定义了自定义的 Vue.js 组件，用于在文档中嵌入交互式内容。
         vueComponents: {
           'button-counter': {
             template: /* html */ `<button @click="count += 1">You clicked me {{ count }} times</button>`,
@@ -135,6 +141,7 @@
             },
           },
         },
+        // 一个对象，设置了全局的 Vue.js 选项，包括数据、计算属性和方法。
         vueGlobalOptions: {
           data() {
             return {
@@ -168,6 +175,7 @@
             },
           },
         },
+        // 一个对象，定义了 Vue.js 实例的挂载点。
         vueMounts: {
           '#counter': {
             data() {
@@ -177,6 +185,7 @@
             },
           },
         },
+        // 一个数组，包含自定义插件的配置。这些插件可以在文档网站中添加额外的功能，如广告集成、内容渲染等。
         plugins: [
           DocsifyCarbon.create('CEBI6KQE', 'docsifyjsorg'),
           function (hook, vm) {

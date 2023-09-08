@@ -1,4 +1,3 @@
-> 这是启用封面的内容，通常用于展示网站的概要信息
 ![logo](_media/icon.svg)
 
 # docsify <small>4.13.0</small>
