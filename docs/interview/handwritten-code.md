@@ -17,7 +17,7 @@ function.bind(context, arg1, arg2, ...)
 
 ### 模拟实现apply
 ?> 在函数原型上定义
-* 接收两个参数，一个上下文对象`context`，一个参数数组`argsArray`。
+* 接收两部分参数，一个部分是上下文对象`context`，一个部分是形参`args`。
 * `context`应为可选参数，不传的情况下默认上下文是`window`。
 * 判断当前this是否为函数，防止`Function.prototype.myCall()`自身调用。
 * 为传递的上下文`context`创建一个`Symbol`（保证不重名）属性，该属性指向当前`this`（函数自身），即通过改变当前函数的调用环境改变上下文。
@@ -90,6 +90,7 @@ function myApply(fn, context = window, argsArray = []) {
 * 为传递的上下文`context`创建一个`Symbol`（保证不重名）属性，该属性指向当前`this`（函数自身），即通过改变当前函数的调用环境改变上下文。
 * 传递参数。
 * 调用后删除`Symbol`属性不更改传递的对象。
+
 ```js
 Function.prototype.myCall = function(context = window, ...args) {
   // this 指定义的函数自身
@@ -108,7 +109,9 @@ Function.prototype.myCall = function(context = window, ...args) {
   return result
 }
 ```
-*示例：通过lzg.fn()调用时，fn是在lzg内部执行，所以上下文（this）是lzg对象，通过lzg.fn().myApply调用时，fn的执行环境被改变，上下文变成test对象*
+
+*示例：通过lzg.fn()调用时，fn是在lzg内部执行，所以上下文（this）是lzg对象，通过lzg.fn().myCall调用时，fn的执行环境被改变，上下文变成test对象*
+
 ```js
 const lzg = {
   name: 'lzg',
@@ -124,110 +127,49 @@ const test = {
 
 lzg.fn.myCall(test) // 输出test
 ```
-## Writing content
+### 模拟实现bind
 
-After the `init` is complete, you can see the file list in the `./docs` subdirectory.
+?> 不同于apply和call改变函数执行上下文后，会立即执行并返回相应结果，bind方法，返回的是一个改变函数执行上线文的函数，因此bind不会立即执行，如需使用还需单独调用
 
-- `index.html` as the entry file
-- `README.md` as the home page
-- `.nojekyll` prevents GitHub Pages from ignoring files that begin with an underscore
+* 接收两部分参数，一个部分是上下文对象`context`，一个部分是形参`args`。
+* `context`应为可选参数，不传的情况下默认上下文是`window`。
+* 判断当前this是否为函数，防止`Function.prototype.myCall()`自身调用。
+* 返回一个闭包
+* 判断是否为构造函数调用，如果是则通过`new`调用当前函数，否则使用`apply`或者`call`进行处理
 
-You can easily update the documentation in `./docs/README.md`, of course you can add [more pages](more-pages.md).
+```js
+Function.prototype.myBind = function(context = window, ...args1) {
+  if ( this === Function.prototype) {
+    throw new Error('Error')
+  }
 
-## Preview your site
-
-Run the local server with `docsify serve`. You can preview your site in your browser on `http://localhost:3000`.
-
-```bash
-docsify serve docs
+  const _this = this
+  return function F(...args2) {
+    if (this instanceof F) {
+      return new _this(...args1, ...args2)
+    }
+    return _this.apply(context, [...args1, ...args2])
+  }
+}
 ```
 
-?> For more use cases of `docsify-cli`, head over to the [docsify-cli documentation](https://github.com/docsifyjs/docsify-cli).
+*示例：通过lzg.fn()调用时，fn是在lzg内部执行，所以上下文（this）是lzg对象，通过lzg.fn().bind调用时，只是返回了一个函数（闭包），当函数被调用时，fn的执行环境被改变，上下文变成test对象*
 
-## Manual initialization
+```js
+const lzg = {
+  name: 'lzg',
+  fn() {
+    console.log(`我是${this.name}`)
+  }
+}
 
-If you don't like `npm` or have trouble installing the tool, you can manually create `index.html`:
+lzg.fn() // 输出lzg
+const test = {
+  name: 'test'
+}
 
-```html
-<!-- index.html -->
+const newfn = lzg.fn.bind(test) // 返回一个函数
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta charset="UTF-8" />
-    <link
-      rel="stylesheet"
-      href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css"
-    />
-  </head>
-  <body>
-    <div id="app"></div>
-    <script>
-      window.$docsify = {
-        //...
-      };
-    </script>
-    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  </body>
-</html>
+newfn() // 输出test
 ```
 
-### Specifying docsify versions
-
-?> Note that in both of the examples below, docsify URLs will need to be manually updated when a new major version of docsify is released (e.g. `v4.x.x` => `v5.x.x`). Check the docsify website periodically to see if a new major version has been released.
-
-Specifying a major version in the URL (`@4`) will allow your site will receive non-breaking enhancements (i.e. "minor" updates) and bug fixes (i.e. "patch" updates) automatically. This is the recommended way to load docsify resources.
-
-```html
-<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/themes/vue.css" />
-<script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-```
-
-If you prefer to lock docsify to a specific version, specify the full version after the `@` symbol in the URL. This is the safest way to ensure your site will look and behave the same way regardless of any changes made to future versions of docsify.
-
-```html
-<link
-  rel="stylesheet"
-  href="//cdn.jsdelivr.net/npm/docsify@4.11.4/themes/vue.css"
-/>
-<script src="//cdn.jsdelivr.net/npm/docsify@4.11.4"></script>
-```
-
-### Manually preview your site
-
-If you have Python installed on your system, you can easily use it to run a static server to preview your site.
-
-```python2
-cd docs && python -m SimpleHTTPServer 3000
-```
-
-```python3
-cd docs && python -m http.server 3000
-```
-
-## Loading dialog
-
-If you want, you can show a loading dialog before docsify starts to render your documentation:
-
-```html
-<!-- index.html -->
-
-<div id="app">Please wait...</div>
-```
-
-You should set the `data-app` attribute if you changed `el`:
-
-```html
-<!-- index.html -->
-
-<div data-app id="main">Please wait...</div>
-
-<script>
-  window.$docsify = {
-    el: '#main',
-  };
-</script>
-```
-
-Compare [el configuration](configuration.md#el).
