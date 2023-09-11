@@ -21,8 +21,8 @@ function.bind(context, arg1, arg2, ...)
 * `context`应为可选参数，不传的情况下默认上下文是`window`。
 * 判断当前this是否为函数，防止`Function.prototype.myCall()`自身调用。
 * 为传递的上下文`context`创建一个`Symbol`（保证不重名）属性，该属性指向当前`this`（函数自身），即通过改变当前函数的调用环境改变上下文。
-* 传递参数
-* 调用后删除`Symbol`属性不更改传递的对象
+* 判断参数是否是一个数组，如果是并传递参数。
+* 调用后删除`Symbol`属性不更改传递的对象。
 
 ```js
 Function.prototype.myApply = function(context = window, argsArray = []) {
@@ -82,14 +82,48 @@ function myApply(fn, context = window, argsArray = []) {
 }
 ```
 
-## Initialize
+### 模拟实现call
+?> 实现类似apply，区别在于参数是通过形参的方式一个一个传递
+* 接收两部分参数，一个部分是上下文对象`context`，一个部分是形参`args`。
+* `context`应为可选参数，不传的情况下默认上下文是`window`。
+* 判断当前this是否为函数，防止`Function.prototype.myCall()`自身调用。
+* 为传递的上下文`context`创建一个`Symbol`（保证不重名）属性，该属性指向当前`this`（函数自身），即通过改变当前函数的调用环境改变上下文。
+* 传递参数。
+* 调用后删除`Symbol`属性不更改传递的对象。
+```js
+Function.prototype.myCall = function(context = window, ...args) {
+  // this 指定义的函数自身
+  if ( this === Function.prototype ) {
+    return undefined
+  }
+  // 唯一key
+  const symbol = Symbol()
 
-If you want to write the documentation in the `./docs` subdirectory, you can use the `init` command.
-
-```bash
-docsify init ./docs
+  // 改变函数（this）的调用环境
+  context[symbol] = this
+  // 在context内容调用这个函数（this）即这个函数内部的（this）执行这个context
+  const result = context[symbol](...args)
+  // 删除这个多余的属性
+  delete context[symbol]
+  return result
+}
 ```
+*示例：通过lzg.fn()调用时，fn是在lzg内部执行，所以上下文（this）是lzg对象，通过lzg.fn().myApply调用时，fn的执行环境被改变，上下文变成test对象*
+```js
+const lzg = {
+  name: 'lzg',
+  fn() {
+    console.log(`我是${this.name}`)
+  }
+}
 
+lzg.fn() // 输出lzg
+const test = {
+  name: 'test'
+}
+
+lzg.fn.myCall(test) // 输出test
+```
 ## Writing content
 
 After the `init` is complete, you can see the file list in the `./docs` subdirectory.
