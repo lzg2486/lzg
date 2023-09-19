@@ -81,6 +81,19 @@ function myApply(fn, context = window, argsArray = []) {
   return result
 }
 ```
+!> 为什么上述this 指定义的函数自身？
+```js
+// 上述通过在Function原型链上定义一个myApply 方法
+// 那么对于一个普通函数，我们这个可以通过其__proto__属性，找到其原型链上的方法，这就意味着每个普通函数都是拥有这个myApply方法
+// 所以一个普通函数通过test.myApply()调用myApply方法时等同于下面test对象调用test.myApply()方法，因此myApply方法内部的this就是test自身
+function test() {}
+
+// 等同于
+var test = {
+  myApply: function () { console.log(this)}
+}
+```
+
 
 ### 模拟实现call
 ?> 实现类似apply，区别在于参数是通过形参的方式一个一个传递
@@ -171,5 +184,45 @@ const test = {
 const newfn = lzg.fn.bind(test) // 返回一个函数
 
 newfn() // 输出test
+```
+
+## 手写Promise
+?> `异步`、`Promise`、`微任务`、`宏任务`、`async/await`的前因后果
+
+**异步：** 在`JavaScript`中按照代码顺序执行称为同步操作，由于`JavaScript`是单线程，在某些场景如定时器、网络请求，由于代码不能立即反馈，而依赖上述反馈的代码就需要等待上述任务执行完成才能继续执行（代码阻塞）形成异步操作。
+
+在`JavaScript`早期，为了解决异步操作，主要通过回调函数进行处理。多个回调函数的嵌套容易形成回调地狱导致代码难以理解和维护。
+
+**Promise：** 为了解决这些问题**ECMAScript 6（ES6）**设计了`Promise`，以更结构化、可读性更强的方式处理异步编程，同时规定了**宏任务（macrotask）**和**微任务（microtask）**概念更好的管理和控制异步操作。
+
+Promsie引入了（`pending`、`fulfilled`、`rejected`）的概念，允许异步操作的结果在将来的某个时刻被处理，当`Promsie`被解决（`fulfilled`）或拒绝（`rejected`）时，**对应的处理函数**会被放入微任务队列中等待被执行（事件轮询）。同时，`Promise`允许链式调用`.then()`方法，也可以通过`.catch()`方法来捕获异步操作的错误。
+
+**微任务（Microtask）：** 微任务是一个非常轻量级的任务队列，用于处理异步操作，它具有更高的优先级。在`ES6`中，`Promise`的处理函数会产生微任务。当一个`Promise`被解决（`fulfilled`）或拒绝（`rejected`）时，相关的处理函数会被放入微任务队列中。这使得`Promise`的异步操作能够在下一个事件循环迭代之前执行，以确保它们具有更高的优先级，从而避免了阻塞主线程。
+
+**宏任务（Macrotask）：** 宏任务是一个较重的任务队列，用于处理其他类型的异步操作。宏任务包括定时器回调（如`setTimeout`、`setInterval`）、I/O操作、DOM事件处理器等。这些任务通常在事件循环的下一轮中执行，相对于微任务而言优先级较低。
+
+**async/await：** 尽管Promise解决了回调地狱的问题，但是依然需要编写嵌套的`Promise`链式调用，使得代码看起来依然复杂。`async/await`是为了进一步改善异步编程体验而引入的。
+
+`async/await`是`Promise`的语法糖。`async/await`是建立在`Promise`之上的，它提供了一种更像同步代码的写法，使异步代码看起来更像同步执行。
+使用`async`关键字声明的函数会自动返回一个`Promise`对象，这个`Promise`对象会在函数内部的异步操作完成时解决（`fulfilled`）并返回结果，或者在出现异常时拒绝（`rejected`）并抛出异常。
+
+`await`关键字可以在`async`函数内部用于等待一个`Promise`的解决，然后获取解决后的值，这使得代码看起来更像同步代码。另外`await`后面的代码则是当前`async`被解决后**对应处理的函数**，只有这部分才会被放入**微任务**队列中
+```js
+async function a() {
+    console.log(1) // 我只是返回一个promise对象，我并没有进行等待，所以我不需要放入微任务队列
+}
+async function b() {
+    console.log(2) // 我并没有进行等待，所以我不需要放入微任务队列
+    await a() // 等待a完成
+    console.log(3) // 我是等待后要处理的函数，所以只有我会在a解决后被放入到微任务队列中
+}
+function c() {
+    console.log(4)
+    a()
+    b()
+    console.log(5)
+}
+c() // 4 1 2 1 5 3
+
 ```
 
